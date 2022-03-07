@@ -37,8 +37,7 @@ const [form, setForm] = useState(initialState);
         const { username, password, phoneNumber, avatarURL } = form;
 
         // //will change upon deployment
-        const URL = 'https://localhost:5000/auth.js';
-        // // const URL = 'https://medical-pager.herokuapp.com/auth';
+        const URL = 'https://goodturn-connect.herokuapp.com/auth.js';
 
         //data from the backend 
        
