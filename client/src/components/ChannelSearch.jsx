@@ -1,49 +1,83 @@
-import React, {useState, useEffect} from 'react';
-import { ChatContext } from 'stream-chat-react';
+import React, { useState, useEffect } from 'react';
+import { useChatContext } from 'stream-chat-react';
 
-import {SearchIcon} from '../assets/SearchIcon';
+import { ResultsDropdown } from './'
+import { SearchIcon } from '../assets';
 
-const ChannelSearch = () => {
-    //set the initial values on page load
+const ChannelSearch = ({ setToggleContainer }) => {
+    const { client, setActiveChannel } = useChatContext();
     const [query, setQuery] = useState('');
-    const [loading,setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [teamChannels, setTeamChannels] = useState([])
+    const [directChannels, setDirectChannels] = useState([])
 
-    //asynchronous since we have to wait for the channels to be fetched
-    const getChannels = async(text) => {
+    useEffect(() => {
+        if(!query) {
+            setTeamChannels([]);
+            setDirectChannels([]);
+        }
+    }, [query])
+
+    const getChannels = async (text) => {
         try {
-            //fetch channels
-            
+            const channelResponse = client.queryChannels({
+                type: 'team', 
+                name: { $autocomplete: text }, 
+                members: { $in: [client.userID]}
+            });
+            const userResponse = client.queryUsers({
+                id: { $ne: client.userID },
+                name: { $autocomplete: text }
+            })
+
+            const [channels, { users }] = await Promise.all([channelResponse, userResponse]);
+
+            if(channels.length) setTeamChannels(channels);
+            if(users.length) setDirectChannels(users);
         } catch (error) {
-            setQuery(''); //reset the search 
+            setQuery('')
         }
     }
 
     const onSearch = (event) => {
-        //event.preventDefault; //so that the browser does not reload the page 
-        setLoading(true);
-        //what we are searching for when we type into input
-        setQuery(event.target.value);
+        event.preventDefault();
 
-        //find channels being searched for 
-        getChannels(event.target.value);
-         
+        setLoading(true);
+        setQuery(event.target.value);
+        getChannels(event.target.value)
     }
+
+    const setChannel = (channel) => {
+        setQuery('');
+        setActiveChannel(channel);
+    }
+
     return (
-        <div className='channel-search-container'>
-            <div className='channel-search__input__wrapper'>
-                <div className='channel-search__input__icon'>
-                    <SearchIcon/>
+        <div className="channel-search__container">
+            <div className="channel-search__input__wrapper">
+                <div className="channel-serach__input__icon">
+                    <SearchIcon />
                 </div>
-                <div>
-                    <input className='channel-search__input__text'
-                            placeholder="Search"
-                            type = "text"
-                            value={query}
-                            onChange={onSearch}/>
-                </div>
+                <input 
+                    className="channel-search__input__text" 
+                    placeholder="Search" 
+                    type="text" 
+                    value={query}  
+                    onChange={onSearch}
+                />
             </div>
-    </div>
-    )  
+            { query && (
+                <ResultsDropdown 
+                    teamChannels={teamChannels}
+                    directChannels={directChannels}
+                    loading={loading}
+                    setChannel={setChannel}
+                    setQuery={setQuery}
+                    setToggleContainer={setToggleContainer}
+                />
+            )}
+        </div>
+    )
 }
 
 export default ChannelSearch

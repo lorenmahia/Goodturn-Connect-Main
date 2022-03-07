@@ -5,6 +5,7 @@ import axios from 'axios';
 import signinImage from '../assets/worker1.jpeg'
 import GoodturnLogo from '../assets/GoodturnLogo.png'
 
+
 const cookies = new Cookies();
 const initialState = {
     fullName: '',
@@ -30,15 +31,16 @@ const [form, setForm] = useState(initialState);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        //Passing form data to backend
+        try {
+            //Passing form data to backend
        
         const { username, password, phoneNumber, avatarURL } = form;
 
         // //will change upon deployment
-        const URL = 'https://localhost:5000/auth';
+        const URL = 'https://localhost:5000/auth.js';
         // // const URL = 'https://medical-pager.herokuapp.com/auth';
 
-        //data from the backend
+        //data from the backend 
        
         const { data: { token, userId, hashedPassword, fullName } } = await axios.post(`${URL}/${isSignup ? 'signup' : 'login'}`, {
             username, password, fullName: form.fullName, phoneNumber, avatarURL,
@@ -57,6 +59,12 @@ const [form, setForm] = useState(initialState);
 
         window.location.reload();
 
+            
+        } catch (error) {
+            console.log("Error accessing URL" +error);
+        }
+      
+        
     }
 
     return (
