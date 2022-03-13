@@ -18,6 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded());
 
 app.get('/', (req, res) => {
+    console.log('Hello');
     res.send('Hello, World!');
 });
 
