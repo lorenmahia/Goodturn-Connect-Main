@@ -18,6 +18,8 @@
     "express": "^4.17.3",
     "getstream": "^8.0.0",
     "nodemon": "^2.0.15",
+    "react": "^17.0.2",
+    "react-scripts": "^5.0.0",
     "stream-chat": "^6.0.0",
     "twilio": "^3.75.0"
   }

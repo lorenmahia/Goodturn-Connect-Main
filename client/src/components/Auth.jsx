@@ -37,7 +37,7 @@ const [form, setForm] = useState(initialState);
         const { username, password, phoneNumber, avatarURL } = form;
 
         // //will change upon deployment
-        const URL = 'https://goodturn-connect.herokuapp.com/auth.js';
+        const URL = 'https://goodturn-connect.herokuapp.com/auth';
 
         //data from the backend 
        
