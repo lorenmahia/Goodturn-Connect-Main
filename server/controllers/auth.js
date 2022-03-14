@@ -5,8 +5,8 @@ const crypto = require('crypto');
 
 require('dotenv').config();
 
-const api_key = process.env.STREAM_API_KEY;
-const api_secret = process.env.STREAM_API_SECRET;
+const api_key = process.env.STREAM_APP_KEY;
+const api_secret = process.env.STREAM_APP_SECRET;
 const app_id = process.env.STREAM_APP_ID;
 
 const signup = async (req, res) => {
@@ -24,6 +24,7 @@ const signup = async (req, res) => {
         res.status(200).json({ token, fullName, username, userId, hashedPassword, phoneNumber });
     } catch (error) {
         console.log(error);
+        console.log('key is :' + api_key);
 
         res.status(500).json({ message: error });
     }
