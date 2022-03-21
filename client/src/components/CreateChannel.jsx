@@ -6,7 +6,7 @@ import { CloseCreateChannel } from '../assets';
 
 const ChannelNameInput = ({ channelName = '', setChannelName }) => {
     const handleChange = (event) => {
-        event.preventDefault();
+        event.preventDefault(); //prevent page from reloading 
 
         setChannelName(event.target.value);
     }

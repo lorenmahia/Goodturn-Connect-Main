@@ -12,8 +12,8 @@ const initialState = {
     username: '', 
     password: '',
     confirmPassword: '',
-    phoneNumber: '',
-    avatarURL: '',
+    email: '',
+    jobsId: '',
 }
 
 const Auth =() => {
@@ -23,6 +23,8 @@ const [form, setForm] = useState(initialState);
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
+        //DEBUGGING STEP 
+        //console.log(form)
     }
 
     const switchMode =() =>{
@@ -34,7 +36,7 @@ const [form, setForm] = useState(initialState);
         try {
             //Passing form data to backend
        
-        const { username, password, phoneNumber, avatarURL } = form;
+        const { username, password, email, jobsId  } = form;
 
         // //will change upon deployment
         const URL = 'https://goodturn-connect.herokuapp.com/auth';
@@ -42,17 +44,22 @@ const [form, setForm] = useState(initialState);
         //data from the backend 
        
         const { data: { token, userId, hashedPassword, fullName } } = await axios.post(`${URL}/${isSignup ? 'signup' : 'login'}`, {
-            username, password, fullName: form.fullName, phoneNumber, avatarURL,
+            username, password, fullName: form.fullName, email, jobsId
+        },
+        {  headers: {
+            "Access-Control-Allow-Origin" : `${URL}`,
+            'Content-Type': 'application/json'
+          },
         });
    
         cookies.set('token', token);
         cookies.set('username', username);
         cookies.set('fullName', fullName);
         cookies.set('userId', userId);
+       
 
         if(isSignup) {
-            cookies.set('phoneNumber', phoneNumber);
-            cookies.set('avatarURL', avatarURL);
+            cookies.set('email', email);
             cookies.set('hashedPassword', hashedPassword);
         }
 
@@ -60,7 +67,7 @@ const [form, setForm] = useState(initialState);
 
             
         } catch (error) {
-            console.log("Error accessing URL" +error);
+            console.log("Error accessing URL " + error.toString());
         }
       
         
@@ -74,49 +81,49 @@ const [form, setForm] = useState(initialState);
                         <img src={GoodturnLogo} alt="Goodturn" />
                     </div>
                     <p>
-                        {isSignup ? 'Sign Up' : 'Sign in'}</p>
+                        {isSignup ? 'Sign Up With Goodturn Info' : 'Sign in'}</p>
                     <form onSubmit={handleSubmit}>
                     {isSignup && (
                             <div className="auth__form-container_fields-content_input">
-                                <label htmlFor="fullName">Full Name</label>
+                                <label htmlFor="fullName">fullName</label>
                                 <input 
                                     name="fullName" 
                                     type="text"
-                                    placeholder="Full Name"
+                                    placeholder="Full Name as Registered in Goodturn Jobs"
+                                    onChange={handleChange}
+                                    required
+                                /> 
+                            </div>
+                        )}
+                          {isSignup && (
+                            <div className="auth__form-container_fields-content_input">
+                                <label htmlFor="email">email</label>
+                                <input 
+                                    name="email" 
+                                    type="email"
+                                    placeholder="Same email as your Jobs account"
                                     onChange={handleChange}
                                     required
                                 /> 
                             </div>
                         )}
                         <div className="auth__form-container_fields-content_input">
-                                <label htmlFor="username">Username</label>
+                                <label htmlFor="username">username</label>
                                 <input 
                                     name="username" 
                                     type="text"
-                                    placeholder="userName"
+                                    placeholder="Create userName for faster log ins"
                                     onChange={handleChange}
                                     required
                                 /> 
                         </div>
-                        {isSignup && (
+                          {isSignup && (
                             <div className="auth__form-container_fields-content_input">
-                                <label htmlFor="phoneNumber">PhoneNumber</label>
+                                <label htmlFor="jobsId">jobsId</label>
                                 <input 
-                                    name="phoneNumber" 
-                                    type="text"
-                                    placeholder="Phone Number"
-                                    onChange={handleChange}
-                                    required 
-                                /> 
-                            </div>
-                        )}
-                        {isSignup && (
-                            <div className="auth__form-container_fields-content_input">
-                                <label htmlFor="avatarURL">Avatar URL</label>
-                                <input 
-                                    name="avatarURL" 
-                                    type="text"
-                                    placeholder="avatarURL"
+                                    name="jobsId" 
+                                    type="jobsId"
+                                    placeholder="Goodturn User ID found on the Account Page"
                                     onChange={handleChange}
                                     required
                                 /> 
@@ -127,7 +134,7 @@ const [form, setForm] = useState(initialState);
                                 <input 
                                     name="password" 
                                     type="password"
-                                    placeholder="Password"
+                                    placeholder="Create Password for future logins"
                                     onChange={handleChange}
                                     required
                                 /> 
@@ -152,7 +159,7 @@ const [form, setForm] = useState(initialState);
                         <p>
                             {isSignup
                              ? "Already have an account? " 
-                             : "Don't have an account? "
+                             : "Sign up here to create Username and Password? To reset password please sign up with your Accound ID from Goodturn "
                              }
                              <span onClick={switchMode}>
                              {isSignup ? ' Sign In' : ' Sign Up'}
